@@ -25,6 +25,7 @@
 		<h2>Welcome <c:out value="${user.userName}"/></h2>
    		<h5>Did you come for the cookies?</h5>
    </div>
+   
    <div>
    <form:form action="/register" method="post" modelAttribute="newUser">
    		<div>
@@ -69,7 +70,7 @@
    		<h3>Users:</h3>
    		<c:forEach var="user" items="${allUsers}">
    			<ul>
-   				<li><c:out value="${user.userName}"></c:out></li>
+   				<li><a href="/home/{user.id}"><c:out value="${user.userName}"></c:out></a></li>
    			</ul>
    		</c:forEach>
    		

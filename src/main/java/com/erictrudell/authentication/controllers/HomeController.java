@@ -11,10 +11,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.erictrudell.authentication.models.Book;
 import com.erictrudell.authentication.models.LoginUser;
 import com.erictrudell.authentication.models.User;
+import com.erictrudell.authentication.services.BookService;
 import com.erictrudell.authentication.services.UserService;
 
 @Controller
@@ -23,25 +27,58 @@ public class HomeController {
     // Add once service is implemented:
 	@Autowired
 	private UserService userServ;
+	@Autowired
+	private BookService bookServ;
    
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model,
+    		HttpSession session) {
     
         // Bind empty User and LoginUser objects to the JSP
         // to capture the form input
         model.addAttribute("newUser", new User());
         model.addAttribute("newLogin", new LoginUser());
+        session.removeAttribute("userId");
         List<User> allUsers = userServ.getAll();
         model.addAttribute("allUsers", allUsers);
         return "index.jsp";
     }
+//    FLASH MESSAGES
+    @GetMapping("/createError")
+    public String flashMessage(RedirectAttributes redirectAtt) {
+    	redirectAtt.addFlashAttribute("Error", "Please log-in to continue.");
+    	return "redirect:/";
+    }
     @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
+    public String home(Model model, 
+    		HttpSession session,
+    		RedirectAttributes redirectAtt) {
 //    	pass in two models
+    	List<Book> allBooks = bookServ.getAll();
+    	model.addAttribute("allBooks", allBooks);
+//    	System.out.println(allBooks);
+    	if(session.getAttribute("userId") == null) {
+//    		use flash message here to deny access
+    		redirectAtt.addFlashAttribute("Error", "Please log-in to continue.");
+    		return "redirect:/";
+    	}
+    	Long userId = (Long) session.getAttribute("userId");
+    	model.addAttribute("user", userServ.getOneById(userId));
+    	return"home.jsp";
+    }
+    @GetMapping("/home/{id}")
+    public String userPage(@PathVariable("id") Long id,
+    		Model model, 
+    		HttpSession session) {
+//    	pass in two models
+    	List<Book> allBooks = bookServ.getAll();
+    	model.addAttribute("allBook", allBooks);
     	if(session.getAttribute("userId") == null) {
 //    		use flash message here to deny access
     		return "redirect:/";
     	}
+//    	Do something with the path variable here to convert string to a long?
+//    	lang ex: model.addAttribute("language", langServ.getOneLanguage(id));
     	Long userId = (Long) session.getAttribute("userId");
     	model.addAttribute("user", userServ.getOneById(userId));
     	return"home.jsp";
@@ -113,5 +150,6 @@ public class HomeController {
     	
     	return "redirect:/";
     }
+    
     
 }

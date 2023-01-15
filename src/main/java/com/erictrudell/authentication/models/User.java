@@ -1,11 +1,14 @@
 package com.erictrudell.authentication.models;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -46,6 +49,11 @@ public class User {
     private Date createdAt;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatedAt;
+    
+//    lower case singular of the table name
+    @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
+    private List<Book> books;
+    
     @PrePersist
     protected void onCreate(){
         this.createdAt = new Date();
@@ -54,6 +62,7 @@ public class User {
     protected void onUpdate(){
         this.updatedAt = new Date();
     }
+    
     public User() {}
 	public Long getId() {
 		return id;
@@ -96,6 +105,12 @@ public class User {
 	}
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+	public List<Book> getBooks() {
+		return books;
+	}
+	public void setBooks(List<Book> books) {
+		this.books = books;
 	}
     
     
