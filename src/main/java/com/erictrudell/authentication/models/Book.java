@@ -2,6 +2,7 @@ package com.erictrudell.authentication.models;
 
 import java.util.Date;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -29,10 +31,6 @@ public class Book {
     @Size(min=3, max=30, message="Please enter a valid title")
     private String title;
     
-    @NotEmpty(message="Author is required!")
-    @Size(min=3, max=30,message="Please enter a valid author!")
-    private String author;
-    
     @NotEmpty(message="Thoughts are required!")
     @Size(min=3, max=30,message="Please enter a valid thought!")
     private String thoughts;
@@ -45,6 +43,14 @@ public class Book {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="author_id")
+    private Author author;
+    
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="borrower_id")
+    private User borrower;
     
     
     @PrePersist
@@ -69,10 +75,11 @@ public class Book {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getAuthor() {
+	
+	public Author getAuthor() {
 		return author;
 	}
-	public void setAuthor(String author) {
+	public void setAuthor(Author author) {
 		this.author = author;
 	}
 	public String getThoughts() {
@@ -99,6 +106,19 @@ public class Book {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	public User getBorrower() {
+		return borrower;
+	}
+	public void setBorrower(User borrower) {
+		this.borrower = borrower;
+	}
+	
+	
+	
+
+	
+	
+	
 	
 	
     

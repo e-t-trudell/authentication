@@ -50,20 +50,29 @@ public class HomeController {
     	return "redirect:/";
     }
     @GetMapping("/home")
-    public String home(Model model, 
+    public String home(@ModelAttribute("book_id")Book book,
+    		Model model, 
     		HttpSession session,
     		RedirectAttributes redirectAtt) {
-//    	pass in two models
+//    	first list is for total list of all users
     	List<Book> allBooks = bookServ.getAll();
     	model.addAttribute("allBooks", allBooks);
-//    	System.out.println(allBooks);
+    	model.addAttribute("borrowed", book);
+//    	second list is just no borrower id
+//    	List<Book> availBooks = bookServ.getBorrowed() ;
+//    	model.addAttribute("someBooks", availBooks);
+    	
+    	System.out.println(model.getAttribute("borrowed"));
     	if(session.getAttribute("userId") == null) {
 //    		use flash message here to deny access
     		redirectAtt.addFlashAttribute("Error", "Please log-in to continue.");
     		return "redirect:/";
     	}
     	Long userId = (Long) session.getAttribute("userId");
-    	model.addAttribute("user", userServ.getOneById(userId));
+    	model.addAttribute("userId", userServ.getOneById(userId));
+//    	User user = (User) session.getAttribute("userId");
+//    	model.addAttribute("user", user);
+    	
     	return"home.jsp";
     }
     @GetMapping("/home/{id}")
@@ -77,8 +86,6 @@ public class HomeController {
 //    		use flash message here to deny access
     		return "redirect:/";
     	}
-//    	Do something with the path variable here to convert string to a long?
-//    	lang ex: model.addAttribute("language", langServ.getOneLanguage(id));
     	Long userId = (Long) session.getAttribute("userId");
     	model.addAttribute("user", userServ.getOneById(userId));
     	return"home.jsp";
@@ -113,14 +120,13 @@ public class HomeController {
         if(createdUser == null) {
             model.addAttribute("newLogin", new LoginUser());
             return "index.jsp";
-        }else {
-        	userServ.create(createdUser);
-//        	System.out.println(createdUser);
-        	session.setAttribute("userId", createdUser.getId());
-//        	System.out.println(session.getAttribute("userId"));
-        	
-        	return "redirect:/home";
         }
+        userServ.create(createdUser);
+//        	System.out.println(createdUser);
+        session.setAttribute("userId", createdUser.getId());
+//        	System.out.println(session.getAttribute("userId"));
+        return "redirect:/home";
+        
     }
     
     @PostMapping("/login")

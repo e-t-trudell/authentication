@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -53,6 +54,11 @@ public class User {
 //    lower case singular of the table name
     @OneToMany(mappedBy="user", fetch=FetchType.LAZY)
     private List<Book> books;
+    
+//    START HERE: you have an issue with adding the user id to the books borrower_id
+    @OneToMany(mappedBy="borrower", fetch=FetchType.LAZY)
+    private List<Book> borrowedBooks;
+    
     
     @PrePersist
     protected void onCreate(){
@@ -112,6 +118,13 @@ public class User {
 	public void setBooks(List<Book> books) {
 		this.books = books;
 	}
+	public List<Book> getBorrowedBooks() {
+		return borrowedBooks;
+	}
+	public void setBorrowedBooks(List<Book> borrowedBooks) {
+		this.borrowedBooks = borrowedBooks;
+	}
+	
     
     
   

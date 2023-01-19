@@ -11,4 +11,5 @@ public interface BookRepository extends CrudRepository<Book, Long>{
 	public Optional<Book> findById(Long id);
 	public List<Book> findAll();
 	public Book save(String u);
+//	public List<Book> findByBorrowerId();
 	}

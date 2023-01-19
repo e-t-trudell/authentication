@@ -47,6 +47,7 @@
    			<form:input path="thoughts" value="${book.thoughts}" class="form-control border border-info"></form:input>
    			<form:errors path="thoughts"></form:errors>
 		</div>
+		<!-- add borrower id to this list for the form -->
 		<div>
    			<form:hidden path="user.id" />
    		</div>

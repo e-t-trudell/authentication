@@ -1,5 +1,7 @@
 package com.erictrudell.authentication.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.erictrudell.authentication.models.Author;
 import com.erictrudell.authentication.models.Book;
+import com.erictrudell.authentication.models.User;
+import com.erictrudell.authentication.services.AuthorService;
 import com.erictrudell.authentication.services.BookService;
 import com.erictrudell.authentication.services.UserService;
 
@@ -28,13 +33,18 @@ public class BookController {
 	private BookService bookServ;
 	@Autowired
 	private UserService userServ;
+	@Autowired
+	private AuthorService authorServ;
 	@GetMapping("/add")
     public String goToCreate(@ModelAttribute("book")Book book,
-    		HttpSession session) {
+    		HttpSession session,
+    		Model model) {
 		if(session.getAttribute("userId") == null) {
 //    		use flash message here to deny access
     		return "redirect:/";
     	}
+		List<Author> allAuth = authorServ.getAll();
+		model.addAttribute("authors", allAuth);
     	return"newBook.jsp";
     }
 	@PostMapping("/create")
@@ -42,17 +52,19 @@ public class BookController {
 			BindingResult result,
 			HttpSession session, 
 			Model model) {
-//		if(session.getAttribute("userId") == null) {
-////    		use flash message here to deny access
-//    		return "redirect:/";
-//    	}
+		if(session.getAttribute("userId") == null) {
+//    		use flash message here to deny access
+    		return "redirect:/";
+    	}
 		if(result.hasErrors()) {
 			return"newBook.jsp";
 		}
 //		get user id from session
 		Long userId = (Long) session.getAttribute("userId");
+		User user = (User) session.getAttribute("user");
 //		setting user id from session to the user_id for book creation
 		book.setUser(userServ.getOneById(userId));
+		book.setUser(user);
 		bookServ.create(book);
 		return"redirect:/home";
 	}
@@ -81,6 +93,43 @@ public class BookController {
 		model.addAttribute("book",bookServ.getOne(id));
 		return "edit.jsp";
 	}
+//	change to a post method?
+	@GetMapping("/borrow/{id}")
+	public String borrow(@PathVariable("book_id")Long id,
+			Model model,
+			HttpSession session) {
+
+		User user = (User) session.getAttribute("user");
+//		
+		Book book = bookServ.getOne(id);
+		book.setBorrower(user);
+		bookServ.updateBook(book);
+//		bookServ.borrow(user, book);
+//		set the books borrower id to user id in session
+//		book.setBorrowerId(userServ.getOneById(userId));
+//		bookServ.updateBook(book);
+//		model.addAttribute("borrower", session.getAttribute("userId"));
+//		add newly borrowed book to model to display
+		model.addAttribute("borrowed", book);
+		return"redirect:/home";
+	}
+	@GetMapping("/return/{id}")
+	public String returnBook(@PathVariable("book_id")Long id,
+			Model model,
+			HttpSession session) {
+		Book book = bookServ.getOne(id);
+		book.setBorrower(null);
+		bookServ.updateBook(book);
+//		bookServ.borrow(user, book);
+//		set the books borrower id to user id in session
+//		book.setBorrowerId(userServ.getOneById(userId));
+//		bookServ.updateBook(book);
+//		model.addAttribute("borrower", session.getAttribute("userId"));
+//		add newly borrowed book to model to display
+		model.addAttribute("borrowed", book);
+		return"redirect:/home";
+	}
+	
 	@PutMapping("/update/{book_id}")
 	public String update(@Valid @ModelAttribute("book")Book book,
 			BindingResult result) {
@@ -96,4 +145,16 @@ public class BookController {
 		bookServ.deleteBook(id);
 		return"redirect:/home";
 	}
+//	@GetMapping("/borrow/{id}")
+//	public String borrow(@PathVariable("book_id")Long id,
+//			Model model,
+//			HttpSession session) {
+//		Long userId = (Long) session.getAttribute("userId");
+//		Book book = bookServ.getOne(id);
+//		model.getAttribute("book");
+//		book.setBorrower(userServ.getOneById(userId));
+//		model.addAttribute("borrower", session.getAttribute("userId"));
+//		return"redirect:/home";
+//	}
+	
 }

@@ -31,15 +31,15 @@
 			<h3>
 				<c:out value="${book.user.userName}"></c:out> read 
 				<c:out value="${book.title}"></c:out> by 
-				<c:out value="${book.author}"></c:out>.
+				<c:out value="${book.author.fName}"></c:out> <c:out value="${book.author.lName}"></c:out>.
 			</h3>
 			<h4>Here are <c:out value="${book.user.userName}"></c:out>'s thoughts:</h4>
 		</div>
-		
+		<hr />
 		<div>
 			<p><c:out value="${book.thoughts}"></c:out></p>
 		</div>
-		
+		<hr />
 		
 	</div>
 	<div>

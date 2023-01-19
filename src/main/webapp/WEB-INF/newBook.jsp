@@ -35,11 +35,17 @@
    			<form:input path="title"></form:input>
    			<form:errors path="title"></form:errors>
 		</div>
-		<div>
-   			<form:label path="author">Author: </form:label>
-   			<form:input path="author"></form:input>
+		<div >
+   			<form:label path="author">Author:</form:label>
+   			<form:select path="author">
+   				<c:forEach var="author" items="${authors}">
+   					<form:option value="${author.author_id}" path="author">
+   						<c:out value="${author.fName}"/> <c:out value="${author.lName}"/>
+   					</form:option>
+   				</c:forEach>
+   			</form:select>
    			<form:errors path="author"></form:errors>
-		</div>
+   		</div>
 		<div>
    			<form:label path="thoughts">My thoughts: </form:label>
    			<form:input path="thoughts"></form:input>

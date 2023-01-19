@@ -23,12 +23,17 @@ public class BookService {
 	}
 	public Book getOne(Long id) {
 		Optional<Book> book = bookRepo.findById(id);
-    	if(book.empty() != null) {
+    	if(book.isPresent()) {
     		return book.get();
     	}
     	return null;
-		
 	}
+//	public Book borrow(User u, Book b) {
+//		List<User> borrower = b.getBorrowedBy() ;
+//		borrower.add(u);
+//		b.setBorrowedBy(borrower);
+//		return bookRepo.save(b);
+//	}
 	public Book updateBook(Book e) {
 		return bookRepo.save(e);
 	}
