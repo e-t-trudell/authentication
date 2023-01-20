@@ -50,19 +50,16 @@ public class HomeController {
     	return "redirect:/";
     }
     @GetMapping("/home")
-    public String home(@ModelAttribute("book_id")Book book,
+    public String home(
     		Model model, 
     		HttpSession session,
     		RedirectAttributes redirectAtt) {
-//    	first list is for total list of all users
     	List<Book> allBooks = bookServ.getAll();
     	model.addAttribute("allBooks", allBooks);
-    	model.addAttribute("borrowed", book);
-//    	second list is just no borrower id
+//    	model.addAttribute("borrowed", book);
+//    	System.out.println(model.getAttribute("borrowed"));
 //    	List<Book> availBooks = bookServ.getBorrowed() ;
 //    	model.addAttribute("someBooks", availBooks);
-    	
-    	System.out.println(model.getAttribute("borrowed"));
     	if(session.getAttribute("userId") == null) {
 //    		use flash message here to deny access
     		redirectAtt.addFlashAttribute("Error", "Please log-in to continue.");
@@ -70,8 +67,9 @@ public class HomeController {
     	}
     	Long userId = (Long) session.getAttribute("userId");
     	model.addAttribute("userId", userServ.getOneById(userId));
-//    	User user = (User) session.getAttribute("userId");
-//    	model.addAttribute("user", user);
+    	User user = userServ.getOneById(userId);
+//    	when you set the "user" to  session.getAttribute("userId") you get an error that Long does not have a property of id
+    	model.addAttribute("user", user);
     	
     	return"home.jsp";
     }
@@ -86,8 +84,9 @@ public class HomeController {
 //    		use flash message here to deny access
     		return "redirect:/";
     	}
-    	Long userId = (Long) session.getAttribute("userId");
-    	model.addAttribute("user", userServ.getOneById(userId));
+//    	Long userId = (Long) session.getAttribute("userId");
+    	model.addAttribute("user", session.getAttribute("userId"));
+    	
     	return"home.jsp";
     }
 //    easy way

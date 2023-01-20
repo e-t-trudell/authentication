@@ -64,7 +64,7 @@ public class BookController {
 		User user = (User) session.getAttribute("user");
 //		setting user id from session to the user_id for book creation
 		book.setUser(userServ.getOneById(userId));
-		book.setUser(user);
+//		book.setUser(user);
 		bookServ.create(book);
 		return"redirect:/home";
 	}
@@ -93,16 +93,18 @@ public class BookController {
 		model.addAttribute("book",bookServ.getOne(id));
 		return "edit.jsp";
 	}
-//	change to a post method?
-	@GetMapping("/borrow/{id}")
+
+	@GetMapping("/borrow/{book_id}")
 	public String borrow(@PathVariable("book_id")Long id,
 			Model model,
 			HttpSession session) {
-
 		User user = (User) session.getAttribute("user");
-//		
 		Book book = bookServ.getOne(id);
-		book.setBorrower(user);
+//		must add User here due to setter in book model
+//		book.setBorrower(user);
+		Long userId = (Long) session.getAttribute("userId");
+		book.setBorrower(userServ.getOneById(userId));
+		
 		bookServ.updateBook(book);
 //		bookServ.borrow(user, book);
 //		set the books borrower id to user id in session
@@ -113,7 +115,7 @@ public class BookController {
 		model.addAttribute("borrowed", book);
 		return"redirect:/home";
 	}
-	@GetMapping("/return/{id}")
+	@GetMapping("/return/{book_id}")
 	public String returnBook(@PathVariable("book_id")Long id,
 			Model model,
 			HttpSession session) {

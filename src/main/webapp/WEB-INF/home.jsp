@@ -22,7 +22,7 @@
 </head>
 <body>
 	<div>
-   		<h2>Welcome <c:out value="${user.userName}"/></h2>
+   		<h2>Welcome <c:out value="${userId.userName}"/></h2>
    		<h5>Please check out our books!</h5>
    </div>
    <div>
@@ -31,6 +31,7 @@
    		<a href="/">+ Add new user</a>
    		<a href="/author/new">+ Add new author</a>
    </div>
+   <h3>All books that may be borrowed!</h3>
    <table class=" border border-4 border-warning table table responsive table-striped table-bordered table-hover.active p-5">
    		<thead class="container-fluid">
    			<tr >
@@ -59,7 +60,7 @@
    				<td>
    					<c:out value="${book.user.userName}"></c:out>
    				</td>
-   				<c:if test="${userId==book.user.id}">
+   				<c:if test="${user.id==book.user.id}">
    				 <!-- == session.getAttribute("userId") -->
    					<td>
 						<a href="/books/edit/${book.book_id}"><button>Edit Me</button></a>
@@ -118,8 +119,12 @@
    		<tbody>
    		 <!-- all books populate on the borrowing list first the c:if -->
    			<c:forEach var="bbook" items="${allBooks}">
-   			<!-- check if logged in user is the borrower -->
-   			<c:if test="${user.id == book.borrower.id}">
+   			<!-- check if logged in user is the borrower 
+   			borrower is a type User 
+   			so the comparison needs to compare User types
+   			-->
+   			<c:if test="${user == bbook.borrower}">
+   			<!-- ${book.user.id != user.id} -->
    			<tr>
    				<td>
    					<c:out value="${bbook.book_id}"/>
@@ -135,7 +140,7 @@
    				</td>
    				
    				<td>
-   					<a href="/books/return//${book.book_id}">Give Back</a>
+   					<a href="/books/return/${bbook.book_id}">Give Back</a>
    				</td>
    				<%-- <% %> --%>
    			
