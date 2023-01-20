@@ -9,4 +9,8 @@ edit book by id
 delete book by id
 
 #third commit forcast:
-add edit and delete only if created of book is logged in!
+add edit and delete only if creator of book is logged in!
+
+#third commit:
+add edit and delete only if creator of book is logged in!
+added borrow or give back functionality based on user in session creating the books or not to make them available to borrow or give back
